@@ -50,6 +50,18 @@ class NewsController extends Controller
         $news->short_descrition = $request->short_descrition;
         $news->full_text = $request->full_text;
 
+        $fname = $request->file('image');
+        if($fname != null)
+        {
+            $originalname = $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path().'/images', $originalname);
+            $news->image = '/images/'.$originalname;
+        }
+        else
+        {
+            $news->image = '';
+        }
+
         if (!$news->save()) {
             $err = $news->getErrors();
             return redirect()->action('NewsController@create')->with('error', $err)->withInput();
@@ -66,7 +78,8 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-        //
+        $news = News::find($id);
+        return view('news.show')->with('news', $news);
     }
 
     /**
@@ -77,7 +90,8 @@ class NewsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $news = News::find($id);
+        return view('news.create', ['news'=>$news]);
     }
 
     /**
@@ -89,7 +103,31 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'summary'=> 'required|max:50',
+            'short_descrition' => 'required|max:150',
+            'full_text' => 'required|max:5000'
+        ]);
+
+        $news = News::find($id);
+        $news->summary = $request->summary;
+        $news->short_descrition = $request->short_descrition;
+        $news->full_text = $request->full_text;
+
+        $fname = $request->file('image');
+        if($fname != null)
+        {
+            $originalname = $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path().'/images', $originalname);
+            $news->image = '/images/'.$originalname;
+        }
+        else
+        {
+            $news->image = '';
+        }
+        $news->save();
+        return redirect('news/'.$news->id);
+
     }
 
     /**

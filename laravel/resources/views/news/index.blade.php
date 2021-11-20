@@ -6,12 +6,16 @@
     </div>
 
         @foreach($news->reverse() as $n)
-            <h3 style="color:blue">{{$n->summary}}</h3>
-            <p style="color:#0b69da">{{$n->short_descrition}}
-            </p>
-            <p>{{$n->updated_at}}
-                <a style="float:right; color:blue" href="">Read more</a>
-            </p>
-            <hr>
+            <div>
+                <h3 style="color:blue">{{$n->summary}}</h3>
+                <p style="color:#0b69da">{{$n->short_descrition}}
+                </p>
+                {!! Form::model($n, array('route' => array('news.show', $n->$id))) !!}
+                <span>{{$n->created_at}}</span>
+                <a style="float: right"  href="{{url('news/'.$n->id)}}">Read more</a>
+                {!! Form::close() !!}
+
+
+                <hr>
         @endforeach
 @endsection
